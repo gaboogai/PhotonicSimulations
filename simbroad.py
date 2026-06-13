@@ -25,9 +25,10 @@ from rayflare.options import default_options
 lam = 1.064          # wavelength (um)
 
 # angle of incidence range (degrees)
-angle_start = 0.0
-angle_stop = 1.0
+angle_start = 4.0
+angle_stop = 5.0
 n_angles = 1
+angles = np.linspace(angle_start, angle_stop, n_angles + 1)
 
 thickness = 0.02     # slab thickness (um)
 shape = "hex"        # pattern type (hexagonal lattice)
@@ -37,11 +38,14 @@ material_name = "SiN"
 lattice_start = 1.21
 lattice_stop = 1.23
 n_lattices = 100
+lattices = np.linspace(lattice_start, lattice_stop, n_lattices + 1)
 
 # radius range (um)
 radius_start = 0.2
 radius_stop = 0.6
 n_radius = 100
+radii = np.linspace(radius_start, radius_stop, n_radius + 1)
+
 
 n_orders = 20        # number of Fourier orders (SetNumG in the Lua script)
 
@@ -69,11 +73,6 @@ class SellmeierSiN:
 #   2/ SWEEP RANGES
 # --------------------------------------------------------
 
-# Lua "for v=start,stop,step" loops are inclusive of the endpoint and produce
-# n+1 samples; linspace(start, stop, n+1) reproduces those grids exactly.
-radii = np.linspace(radius_start, radius_stop, n_radius + 1)
-lattices = np.linspace(lattice_start, lattice_stop, n_lattices + 1)
-angles = np.linspace(angle_start, angle_stop, n_angles + 1)
 
 SiN = SellmeierSiN()
 Air = material("Air")()
