@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from solcore import si, material
 from solcore.structure import Layer
@@ -6,6 +7,8 @@ from solcore.solar_cell import SolarCell
 from rayflare.rigorous_coupled_wave_analysis import rcwa_structure
 from rayflare.options import default_options
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from cycler import cycler
@@ -91,7 +94,9 @@ for i1, geometry in enumerate(grating_list):
     RAT = S4_setup.calculate(options)
     GaAs_absorption[i1] = RAT['A_per_layer'][:, 1]
     grating_absorption[i1] = RAT['A_per_layer'][:, 3]
-    pattern = S4_setup.get_fourier_epsilon(layer_index=4, wavelength=500, options=options)
+    pattern = S4_setup.get_fourier_epsilon(layer_index=4, wavelength=500, options=options, plot=True)
+    plt.savefig(f"example_dieletric_plt/epsilon_{i1}.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 #--------- Section 4 --------------------------------------------------
 
@@ -109,3 +114,4 @@ plt.xlabel('Wavelength (nm)')
 plt.ylabel('Absorption in 80 nm GaAs/grating')
 plt.autoscale(tight=True)
 plt.show()
+plt.savefig('example_dieletric_plt/ExamplePlot.png', transparent=False, dpi=80, bbox_inches="tight")
