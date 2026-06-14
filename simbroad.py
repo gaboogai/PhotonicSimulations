@@ -18,6 +18,8 @@ from solcore.solar_cell import SolarCell
 from rayflare.rigorous_coupled_wave_analysis import rcwa_structure
 from rayflare.options import default_options
 
+import S4  # native S4 Python extension, used by S4reflectance()
+
 # --------------------------------------------------------
 #   1/ SET THE PARAMETERS
 # --------------------------------------------------------
@@ -103,38 +105,88 @@ def reflectance(angle, lattice, radius):
     return S4_setup.calculate(options)["R"][0]
 
 
+def S4reflectance(angle, lattice, radius):
+    """Identical calculation to reflectance(), but driven purely through the
+    native S4 Python API (no solcore/rayflare). It mirrors exactly how RayFlare
+    sets up S4: lengths in nm, frequency = 1/wavelength, and the reflectance
+    taken as Re(-back/forward) of the incidence-medium power flux.
+
+    Not used by the sweep below (which calls reflectance()); provided as a
+    pure-S4 equivalent.
+    """
+    wl_nm = lam * 1e3                       # wavelength in nm
+    a_nm = lattice * 1e3                    # lattice constant in nm
+
+    # hexagonal lattice, same vectors as reflectance()
+    S = S4.New(Lattice=((a_nm, 0.0),
+                        (np.cos(np.pi / 3) * a_nm, np.sin(np.pi / 3) * a_nm)),
+               NumBasis=n_orders)
+
+    # same solver options RayFlare applies to its S4 simulations
+    S.SetOptions(LatticeTruncation="Circular", DiscretizedEpsilon=False,
+                 DiscretizationResolution=8, PolarizationDecomposition=False,
+                 PolarizationBasis="Default", LanczosSmoothing=False,
+                 SubpixelSmoothing=False, ConserveMemory=False,
+                 WeismannFormulation=False, Verbosity=0)
+
+    # permittivities: air = 1, SiN from the same Sellmeier dispersion (eps = n^2)
+    S.SetMaterial(Name="Air", Epsilon=1.0 + 0j)
+    S.SetMaterial(Name="SiN", Epsilon=complex(SiN.n(lam * 1e-6)) ** 2)
+
+    # incidence medium / patterned slab / transmission medium; semi-infinite
+    # media have zero thickness in S4, slab thickness in nm
+    S.AddLayer(Name="incidence", Thickness=0.0, Material="Air")
+    S.AddLayer(Name="slab", Thickness=thickness * 1e3, Material="SiN")
+    S.AddLayer(Name="transmission", Thickness=0.0, Material="Air")
+
+    # circular vacuum hole in the slab
+    S.SetRegionCircle(Layer="slab", Material="Air", Center=(0.0, 0.0),
+                      Radius=radius * 1e3)
+
+    # p-polarised plane wave; IncidenceAngles is the same (angle, 0) tuple
+    # RayFlare passes through from (theta_in, phi_in)
+    S.SetExcitationPlanewave(IncidenceAngles=(angle, 0.0),
+                             sAmplitude=0.0, pAmplitude=1.0, Order=0)
+    S.SetFrequency(1.0 / wl_nm)
+
+    forw, back = S.GetPowerFlux(Layer="incidence")
+    return float((-back / forw).real)
+
+
 # --------------------------------------------------------
 #   3/ RUN AND WRITE ONE CSV PER ANGLE
 # --------------------------------------------------------
 
-tic = time.time()
+if __name__ == "__main__":
 
-for angle in angles:
+    tic = time.time()
 
-    filename = f"cleanbroad{angle:g}.csv"
-    with open(filename, "w") as f:
+    for angle in angles:
 
-        # header row: lattice parameters
-        f.write(" ,")
-        for lattice in lattices:
-            f.write(f"{lattice},")
-        f.write("\n")
+        filename = f"cleanbroad{angle:g}.csv"
+        with open(filename, "w") as f:
 
-        # one row per radius
-        for radius in radii:
-            f.write(f"{radius},")
-
+            # header row: lattice parameters
+            f.write(" ,")
             for lattice in lattices:
-                if lattice <= 2 * radius or lattice < 0:
-                    f.write(" ,")            # holes overlap -> blank, as in Lua
-                else:
-                    f.write(f"{reflectance(angle, lattice, radius)},")
-
+                f.write(f"{lattice},")
             f.write("\n")
 
-            done = 100 * (radius - radius_start + (radii[1] - radii[0])) \
-                / (radius_stop - radius_start)
-            print(f"angle {angle:g} deg - completion: {done:.1f}%")
+            # one row per radius
+            for radius in radii:
+                f.write(f"{radius},")
 
-toc = time.time()
-print("Total time: " + str((toc - tic) / 60))
+                for lattice in lattices:
+                    if lattice <= 2 * radius or lattice < 0:
+                        f.write(" ,")        # holes overlap -> blank, as in Lua
+                    else:
+                        f.write(f"{reflectance(angle, lattice, radius)},")
+
+                f.write("\n")
+
+                done = 100 * (radius - radius_start + (radii[1] - radii[0])) \
+                    / (radius_stop - radius_start)
+                print(f"angle {angle:g} deg - completion: {done:.1f}%")
+
+    toc = time.time()
+    print("Total time: " + str((toc - tic) / 60))

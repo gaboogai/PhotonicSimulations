@@ -51,7 +51,7 @@ class SellmeierSiN:
 # --------------------------------------------------------
 #   2/ REFLECTIVITY CALCULATION
 # --------------------------------------------------------
-
+    
 tic = time.time()
 
 SiN = SellmeierSiN()
