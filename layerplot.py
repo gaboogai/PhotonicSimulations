@@ -58,9 +58,7 @@ if lattice <= 2 * radius:
 a_nm = lattice * 1e3
 
 # hexagonal lattice, same vectors as simbroad.py
-S = S4.New(Lattice=((a_nm, 0.0),
-                    (np.cos(np.pi / 3) * a_nm, np.sin(np.pi / 3) * a_nm)),
-           NumBasis=n_orders)
+S = S4.New(Lattice=((a_nm, 0.0),(0.0,a_nm)),NumBasis=n_orders)
 
 S.SetOptions(LatticeTruncation="Circular", DiscretizedEpsilon=False,
              DiscretizationResolution=8, PolarizationDecomposition=False,

@@ -6,6 +6,7 @@
 #   - first column of each row : hole radius (um)
 #   - cells : reflectance R (blank where the holes overlap, lattice <= 2*radius)
 
+import os
 import sys
 
 import numpy as np
@@ -22,7 +23,15 @@ warnings.filterwarnings('ignore')
 # --------------------------------------------------------
 
 infile = sys.argv[1] if len(sys.argv) > 1 else 'cleanbroad0.csv'
-outfile = infile.rsplit('.', 1)[0] + '.png'
+
+# Don't overwrite an existing plot: if the target name is taken, append an
+# incrementing suffix (name_1.png, name_2.png, ...).
+base = infile.rsplit('.', 1)[0]
+outfile = base + '.png'
+n = 1
+while os.path.exists(outfile):
+    outfile = f'{base}_{n}.png'
+    n += 1
 
 # --------------------------------------------------------
 #   2/ READ THE MATRIX
