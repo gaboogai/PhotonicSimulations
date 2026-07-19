@@ -10,6 +10,7 @@
 #   python plotReflectanceDiff.py file_a.csv file_b.csv [output.png]
 # The plotted quantity is R(file_a) - R(file_b).
 
+import os
 import sys
 
 import numpy as np
@@ -20,6 +21,18 @@ import matplotlib.pyplot as plt
 
 import warnings
 warnings.filterwarnings('ignore')
+
+
+def unique_path(path):
+    """Return path, or path with an incrementing _N suffix if it already exists,
+    so existing output files are never overwritten."""
+    base, ext = os.path.splitext(path)
+    candidate = path
+    n = 1
+    while os.path.exists(candidate):
+        candidate = f'{base}_{n}{ext}'
+        n += 1
+    return candidate
 
 
 def read_reflectance(infile):
@@ -86,6 +99,7 @@ plt.xlabel('Lattice parameter (um)')
 plt.ylabel('Hole radius (um)')
 plt.title(f'Reflectance: {file_a} - {file_b}')
 plt.autoscale(tight=True)
+outfile = unique_path(outfile)
 plt.savefig(outfile, transparent=False, dpi=150, bbox_inches='tight')
 plt.close()
 

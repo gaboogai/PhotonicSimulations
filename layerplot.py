@@ -15,6 +15,7 @@
 # Usage:
 #   python layerplot.py [lattice_um] [radius_um] [cells] [output.png]
 
+import os
 import sys
 
 import numpy as np
@@ -23,6 +24,18 @@ import S4
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+
+def unique_path(path):
+    """Return path, or path with an incrementing _N suffix if it already exists,
+    so existing output files are never overwritten."""
+    base, ext = os.path.splitext(path)
+    candidate = path
+    n = 1
+    while os.path.exists(candidate):
+        candidate = f"{base}_{n}{ext}"
+        n += 1
+    return candidate
 
 # --------------------------------------------------------
 #   1/ SET THE PARAMETERS
@@ -111,6 +124,7 @@ fig.colorbar(m_im, ax=ax_im)
 fig.suptitle(f"Dielectric constant - lattice {lattice:g} um, "
              f"radius {radius:g} um, {cells}x{cells} cells")
 
+outfile = unique_path(outfile)
 fig.savefig(outfile, dpi=150, bbox_inches="tight")
 plt.close(fig)
 

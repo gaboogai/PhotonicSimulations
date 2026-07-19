@@ -7,6 +7,7 @@
 # which is negative there because backward flux points away from the source),
 # written to cleanbroad<angle>.csv in the same header-row/header-column layout.
 
+import os
 import time
 
 import numpy as np
@@ -16,6 +17,18 @@ from solcore.solar_cell import SolarCell
 
 from rayflare.rigorous_coupled_wave_analysis import rcwa_structure
 from rayflare.options import default_options
+
+
+def unique_path(path):
+    """Return path, or path with an incrementing _N suffix if it already exists,
+    so existing output files are never overwritten."""
+    base, ext = os.path.splitext(path)
+    candidate = path
+    n = 1
+    while os.path.exists(candidate):
+        candidate = f"{base}_{n}{ext}"
+        n += 1
+    return candidate
 
 # --------------------------------------------------------
 #   1/ SET THE PARAMETERS
@@ -94,7 +107,7 @@ A = RAT["A_per_layer"][0, 0]
 #   3/ OUTPUT
 # --------------------------------------------------------
 
-filename = f"cleanbroad{angle:g}.csv"
+filename = unique_path(f"cleanbroad{angle:g}.csv")
 with open(filename, "w") as f:
     f.write(f" ,{lattice},\n")
     f.write(f"{radius},{R},\n")

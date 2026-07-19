@@ -18,20 +18,25 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
+
+def unique_path(path):
+    """Return path, or path with an incrementing _N suffix if it already exists,
+    so existing output files are never overwritten."""
+    base, ext = os.path.splitext(path)
+    candidate = path
+    n = 1
+    while os.path.exists(candidate):
+        candidate = f'{base}_{n}{ext}'
+        n += 1
+    return candidate
+
+
 # --------------------------------------------------------
 #   1/ CHOOSE THE OUTPUT TO PLOT
 # --------------------------------------------------------
 
 infile = sys.argv[1] if len(sys.argv) > 1 else 'cleanbroad0.csv'
-
-# Don't overwrite an existing plot: if the target name is taken, append an
-# incrementing suffix (name_1.png, name_2.png, ...).
-base = infile.rsplit('.', 1)[0]
-outfile = base + '.png'
-n = 1
-while os.path.exists(outfile):
-    outfile = f'{base}_{n}.png'
-    n += 1
+outfile = unique_path(infile.rsplit('.', 1)[0] + '.png')
 
 # --------------------------------------------------------
 #   2/ READ THE MATRIX
@@ -68,8 +73,8 @@ mesh = plt.pcolormesh(lattices, radii, reflectance,
                       shading='auto', cmap='viridis')
 cbar = plt.colorbar(mesh)
 cbar.set_label('Reflectance')
-plt.xlabel('Lattice parameter (um)')
-plt.ylabel('Hole radius (um)')
+plt.xlabel('Lattice parameter a (um)')
+plt.ylabel('Hole radius (fraction of a)')
 plt.title(f'Reflectance - {infile}')
 plt.autoscale(tight=True)
 plt.savefig(outfile, transparent=False, dpi=150, bbox_inches='tight')

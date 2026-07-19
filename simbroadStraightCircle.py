@@ -8,12 +8,25 @@
 # rows are hole radii, with each cell the reflectance. Cells where the holes
 # would overlap (lattice <= 2*radius) are left blank, exactly as in the Lua.
 
+import os
 import time
 
 import numpy as np
 
 
 import S4  # native S4 Python extension, used by S4reflectance()
+
+
+def unique_path(path):
+    """Return path, or path with an incrementing _N suffix if it already exists,
+    so existing output files are never overwritten."""
+    base, ext = os.path.splitext(path)
+    candidate = path
+    n = 1
+    while os.path.exists(candidate):
+        candidate = f"{base}_{n}{ext}"
+        n += 1
+    return candidate
 
 # --------------------------------------------------------
 #   1/ SET THE PARAMETERS
@@ -122,7 +135,7 @@ if __name__ == "__main__":
 
     for angle in angles:
 
-        filename = f"cleanbroad{angle:g}.csv"
+        filename = unique_path(f"cleanbroad{angle:g}.csv")
         with open(filename, "w") as f:
 
             # header row: radius values
