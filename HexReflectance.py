@@ -37,7 +37,7 @@ def unique_path(path):
 lam = 1.064          # wavelength (um)
 
 angles_polar = [0,0.313] #pretty sure this is incident, rot about y 0.313
-angles_azi = [0.0,30.0] #,75.0,90.0, 105.0,120.0,135.0,150.0,165.0,180.0] #azimuthal, rot about x
+angles_azi = [0.0,30.0] #,75.0,90.0, 105.0,120.0,135.0,150.0,165.0,180.0] #azimuthal, rot about z
 
 thickness = 0.1     # slab thickness (um)
 shape = "hex"        # pattern type (hexagonal lattice)

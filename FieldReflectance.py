@@ -37,10 +37,10 @@ angle_polar = 0.0
 angle_azi = 0.0
 
 # the single point to evaluate (um)
-lattice = 1.2        # lattice constant a
-radius = 0.35        # hole radius r
+lattice = 1.1125#1.1125        # lattice constant a
+radius = 0.37#0.37        # hole radius r
 
-thickness = 0.03     # slab thickness (um)
+thickness = 0.1     # slab thickness (um)
 n_orders = 20        # number of Fourier orders (SetNumG in the Lua script)
 
 
@@ -178,17 +178,17 @@ if __name__ == "__main__":
     print(f"geometry            : {shape}")
     print(f"incidence angles    : polar {angle_polar:g} deg, azi {angle_azi:g} deg")
     print(f"lattice a           : {lattice:g} um")
-    print(f"hole radius r        : {radius:g} um  (r/a = {radius / lattice:.4f})")
+    print(f"hole radius r       : {radius:g} um  (r/a = {radius / lattice:.4f})")
     print()
     print(f"field reflection r  : {res['r'].real:+.6f} {res['r'].imag:+.6f}j")
     print(f"  magnitude |r|     : {res['mag']:.6f}")
     print(f"  phase arg(r)      : {res['phase_deg']:+.4f} deg")
-    print(f"  cross-pol R        : {res['R_cross']:.6e}")
+    print(f"  cross-pol R       : {res['R_cross']:.6e}")
     print()
     # cross-check: the specular reflectance from the amplitudes should match the
     # specular order's power at all angles; the total reflectance additionally
     # counts any propagating diffraction orders.
     diff = res["R_field"] - res["R_spec_power"]
-    print(f"check |r|^2 (spec)  : {res['R_field']:.8f}")
+    print(f"check |r|^2 (spec)   : {res['R_field']:.8f}")
     print(f"      power (spec)   : {res['R_spec_power']:.8f}  (diff {diff:+.1e})")
     print(f"      power (total)  : {res['R_total']:.8f}  ({res['n_prop']} propagating order(s))")

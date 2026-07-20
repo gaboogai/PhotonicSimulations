@@ -74,7 +74,7 @@ mesh = plt.pcolormesh(lattices, radii, reflectance,
 cbar = plt.colorbar(mesh)
 cbar.set_label('Reflectance')
 plt.xlabel('Lattice parameter a (um)')
-plt.ylabel('Hole radius (fraction of a)')
+plt.ylabel('Hole radius (um)')
 plt.title(f'Reflectance - {infile}')
 plt.autoscale(tight=True)
 plt.savefig(outfile, transparent=False, dpi=150, bbox_inches='tight')
