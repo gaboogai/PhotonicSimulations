@@ -16,12 +16,6 @@ import sys
 import time
 
 import numpy as np
-from solcore import material
-from solcore.structure import Layer
-from solcore.solar_cell import SolarCell
-
-from rayflare.rigorous_coupled_wave_analysis import rcwa_structure
-from rayflare.options import default_options
 
 import S4  # native S4 Python extension, used by reflectance()
 
@@ -46,22 +40,22 @@ lam = 1.064          # wavelength (um)
 
 # angle of incidence range (degrees)
 angles_polar = [0.313] #pretty sure this is incident, rot about y
-angles_azi = [0.0,15.0,30.0,45.0,60.0,75.0,90.0] #azimuthal, rot about x
+angles_azi = [0.0,45.0] #azimuthal, rot about x
 
 thickness = 0.03     # slab thickness (um)
 shape = "square"     # pattern type (square lattice)
 material_name = "SiN"
 
 # lattice parameter range (um)
-lattice_start = 1.032
-lattice_stop = 1.061
-n_lattices = 200
+lattice_start = 0.8
+lattice_stop = 1.2
+n_lattices = 100
 lattices = np.linspace(lattice_start, lattice_stop, n_lattices + 1)
 
 # radius range, as a fraction of the current lattice constant (r = ratio * a)
 ratio_start = 0.075
 ratio_stop = 0.5
-n_radius = 200
+n_radius = 100
 ratios = np.linspace(ratio_start, ratio_stop, n_radius + 1)
 
 
@@ -89,7 +83,6 @@ class SellmeierSiN:
 
 
 SiN = SellmeierSiN()
-Air = material("Air")()
 wavelengths = np.array([lam]) * 1e-6
 
 
@@ -152,7 +145,7 @@ if __name__ == "__main__":
         for angle_polar in angles_polar:
 
             filename = unique_path(
-                f"Two-Angle-Square-30nm/SquareRelativePolar:{angle_polar:g}Azi:{angle_azi:g}"
+                f"Square100nm/SquareRelativePolar:{angle_polar:g}Azi:{angle_azi:g}"
                 f"Lstart:{lattice_start:g}Lstop:{lattice_stop:g}"
                 f"Rstart{ratio_start:g}Rstop{ratio_stop:g}.csv")
             os.makedirs(os.path.dirname(filename), exist_ok=True)

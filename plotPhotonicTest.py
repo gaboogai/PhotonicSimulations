@@ -121,10 +121,10 @@ ax_cut0.set_xlabel('Polar angle (deg)')
 ax_cut0.set_ylabel('|r|')
 ax_cut0.set_title(f'|r| vs polar at azimuthal = {azis[0]:g} deg')
 
-ax_cut1.scatter(polars, mag[:, -1], s=12)
+ax_cut1.scatter(polars, mag[:, 30], s=12)
 ax_cut1.set_xlabel('Polar angle (deg)')
 ax_cut1.set_ylabel('|r|')
-ax_cut1.set_title(f'|r| vs polar at azimuthal = {azis[-1]:g} deg')
+ax_cut1.set_title(f'|r| vs polar at azimuthal = {azis[30]:g} deg')
 
 fig.suptitle(os.path.basename(mag_file))
 fig.tight_layout()

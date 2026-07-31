@@ -49,13 +49,13 @@ def unique_path(path):
 
 lam = 1.064          # wavelength (um)
 
-shape = "hex"        # "hex" or "square" - selectable geometry
+shape = "square"        # "hex" or "square" - selectable geometry
 
 # the fixed lattice/radius point to evaluate (um)
-lattice = 1.1125     # lattice constant a
-radius = 0.37        # hole radius r
+lattice = 1.046     # lattice constant a
+radius = 0.3*lattice        # hole radius r
 
-thickness = 0.1      # slab thickness (um)
+thickness = 0.03      # slab thickness (um)
 n_orders = 20        # number of Fourier orders
 
 # polar angle range (degrees)
@@ -66,7 +66,7 @@ polars = np.linspace(polar_start, polar_stop, n_polar + 1)
 
 # azimuthal angle range (degrees)
 azi_start = 0.0
-azi_stop = 60.0
+azi_stop = 90.0
 n_azi = 60
 azis = np.linspace(azi_start, azi_stop, n_azi + 1)
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     tic = time.time()
 
-    stem = (f"AngleSweep/{shape}FieldAngleL:{lattice:g}R:{radius:g}"
+    stem = (f"Bad30nmSquareTest/{shape}FieldAngleL:{lattice:g}R:{radius:g}"
             f"Pstart:{polar_start:g}Pstop:{polar_stop:g}"
             f"Astart:{azi_start:g}Astop:{azi_stop:g}")
     mag_file = unique_path(f"{stem}Magnitude.csv")

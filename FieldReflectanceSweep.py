@@ -48,14 +48,14 @@ shape = "hex"        # "hex" or "square" - selectable geometry
 
 # incidence angles (degrees); polar = rot about y, azimuthal = rot about x
 angles_polar = [0.313]
-angles_azi = [0.0, 30.0]
+angles_azi = [0,30.0]
 
 thickness = 0.03     # slab thickness (um)
 n_orders = 20        # number of Fourier orders
 
 # lattice parameter range (um)
-lattice_start = 1.188
-lattice_stop = 1.228
+lattice_start = 1.05
+lattice_stop = 1.3
 n_lattices = 100
 lattices = np.linspace(lattice_start, lattice_stop, n_lattices + 1)
 
@@ -87,9 +87,9 @@ if __name__ == "__main__":
     for angle_azi in angles_azi:
         for angle_polar in angles_polar:
 
-            stem = (f"FieldSweep/{shape}FieldPolar:{angle_polar:g}Azi:{angle_azi:g}"
+            stem = (f"ThicknessTestHex/{shape}FieldPolar:{angle_polar:g}Azi:{angle_azi:g}"
                     f"Lstart:{lattice_start:g}Lstop:{lattice_stop:g}"
-                    f"Rstart{ratio_start:g}Rstop{ratio_stop:g}")
+                    f"Rstart{ratio_start:g}Rstop{ratio_stop:g}Thickness{thickness:g}")
             mag_file = unique_path(f"{stem}Magnitude.csv")
             phase_file = unique_path(f"{stem}Phase.csv")
             os.makedirs(os.path.dirname(mag_file), exist_ok=True)
